@@ -10,6 +10,7 @@ export default (req, res, next) => {
       //! в нашому токені зберігається айдішка
       const decoded = jwt.verify(token, 'secret123');
 
+      //! замість userId може бути що завгодно 
       req.userId = decoded._id;
       //! якшо все пройшло гуд то завдяки next ми виконуєм наступну функцію res.send(token);
       next();

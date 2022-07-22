@@ -26,13 +26,13 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     const password = req.body.password;
     //! salt - це алгоритм завдяки якому буде зашифровуватись наш пароль
     const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, salt);
 
     const doc = new UserModel({
       email: req.body.email,
       fullName: req.body.fullName,
       avatarUrl: req.body.avatarUrl,
-      passwordHash,
+      passwordHash: hash,
     });
 
     //! зберігаєм юзера в базі данних
@@ -49,8 +49,10 @@ app.post('/auth/register', registerValidation, async (req, res) => {
       }
     );
 
+    const { passwordHash, ...userData } = user._doc;
+
     res.json({
-      ...user._doc,
+      ...userData,
       token,
     });
   } catch (error) {

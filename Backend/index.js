@@ -16,6 +16,54 @@ mongoose
 const app = express();
 app.use(express.json());
 
+app.post('/auth/login', async (req, res) => {
+  try {
+    //! шукаємо чи є в бд такий email
+    const user = await UserModel.findOne({ email: req.body.email });
+
+    //! якшо нема то вертаєм помилку
+    if (!user) {
+      return res.status(404).json({
+        message: 'Неправильний логін або пароль',
+      });
+    }
+
+    //! якшо користувач все такий був найдений, провіряємо його чи співпадає пароль який він вписав з тим шо є в бд
+    const isValidPass = await bcrypt.compare(
+      req.body.password,
+      user._doc.passwordHash
+    );
+    if (!isValidPass) {
+      return res.status(400).json({
+        message: 'Неправильний логін або пароль',
+      });
+    }
+
+    //! якшо всьо гуд, то створюємо новий токен і тд
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      'secret123',
+      {
+        expiresIn: '30d',
+      }
+    );
+
+    const { passwordHash, ...userData } = user._doc;
+
+    res.json({
+      ...userData,
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Не вдалось авторизуватись',
+    });
+  }
+});
+
 app.post('/auth/register', registerValidation, async (req, res) => {
   try {
     const errors = validationResult(req);

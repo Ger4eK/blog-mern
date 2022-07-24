@@ -15,6 +15,7 @@ import {
   update,
 } from './controllers/PostController.js';
 import multer from 'multer';
+import handleValidationErrors from './utils/handleValidationErrors.js';
 
 mongoose
   .connect(
@@ -43,8 +44,13 @@ app.use(express.json());
 //! тепер пояснюємо експресу шо в нас є спеціальна папка в якій зберігаються статичні файли з фото. І тепер експре буде розуміти шо ми робимо get запит на статичний файл
 app.use('/uploads', express.static('Backend/uploads'));
 
-app.post('/auth/login', loginValidation, login);
-app.post('/auth/register', registerValidation, register);
+app.post('/auth/login', loginValidation, handleValidationErrors, login);
+app.post(
+  '/auth/register',
+  registerValidation,
+  handleValidationErrors,
+  register
+);
 app.get('/auth/me', checkAuth, getMe);
 
 //! перед тим як виконати запит будем використовувати мідлвор з мультера. Якшо прийде картинка тільки тоді буде виконуватись все інше
@@ -56,8 +62,20 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 
 app.get('/posts', getAll);
 app.get('/posts/:id', getOne);
-app.post('/posts', checkAuth, postCreateValidation, create);
-app.patch('/posts/:id', checkAuth, update);
+app.post(
+  '/posts',
+  checkAuth,
+  postCreateValidation,
+  handleValidationErrors,
+  create
+);
+app.patch(
+  '/posts/:id',
+  checkAuth,
+  postCreateValidation,
+  handleValidationErrors,
+  update
+);
 app.delete('/posts/:id', checkAuth, remove);
 
 app.listen(4444, (err) => {

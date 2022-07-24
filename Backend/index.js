@@ -14,6 +14,7 @@ import {
   remove,
   update,
 } from './controllers/PostController.js';
+import multer from 'multer';
 
 mongoose
   .connect(
@@ -23,11 +24,35 @@ mongoose
   .catch((err) => console.log('DB error', err));
 
 const app = express();
+
+//! створюємо сховище наших картинок
+const storage = multer.diskStorage({
+  destination: (_, __, callback) => {
+    //! callback функція говорить шо вона не вертає ніяких помилок 'null' і зберігає всі файли(фото) які будем завантажувати в папку 'uploads'
+    callback(null, 'Backend/uploads');
+  },
+  //! перед тим як файл зберегти в папку 'uploads' тут ми вказуємо назву цьому файлу і вже тоді зберігаєм
+  filename: (_, file, callback) => {
+    callback(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage });
+
 app.use(express.json());
+//! тепер пояснюємо експресу шо в нас є спеціальна папка в якій зберігаються статичні файли з фото. І тепер експре буде розуміти шо ми робимо get запит на статичний файл
+app.use('/uploads', express.static('Backend/uploads'));
 
 app.post('/auth/login', loginValidation, login);
 app.post('/auth/register', registerValidation, register);
 app.get('/auth/me', checkAuth, getMe);
+
+//! перед тим як виконати запит будем використовувати мідлвор з мультера. Якшо прийде картинка тільки тоді буде виконуватись все інше
+app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+  res.json({
+    url: `uploads/${req.file.originalname}`,
+  });
+});
 
 app.get('/posts', getAll);
 app.get('/posts/:id', getOne);

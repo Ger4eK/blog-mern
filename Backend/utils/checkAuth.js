@@ -7,6 +7,7 @@ export default (req, res, next) => {
 
   if (token) {
     try {
+      
       //! в нашому токені зберігається айдішка
       const decoded = jwt.verify(token, 'secret123');
 

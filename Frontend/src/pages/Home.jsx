@@ -7,16 +7,19 @@ import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import axios from '../axios';
-import { fetchPosts } from '../redux/slices/posts';
+import { fetchPosts, fetchTags } from '../redux/slices/posts';
+import { getAvatarGroupUtilityClass } from '@mui/material';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const { posts, tags } = useSelector((state) => state.posts);
 
   const isPostsloading = posts.status === 'loading';
+  const isTagsloading = tags.status === 'loading';
 
   useEffect(() => {
     dispatch(fetchPosts());
+    dispatch(fetchTags());
   }, []);
 
   return (
@@ -52,8 +55,8 @@ export const Home = () => {
         </Grid>
         <Grid xs={4} item>
           <TagsBlock
-            items={['react', 'typescript', 'нотатки']}
-            isLoading={false}
+            items={tags.items}
+            isLoading={isTagsloading}
           />
           <CommentsBlock
             items={[

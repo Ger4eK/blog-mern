@@ -11,6 +11,7 @@ import { getMe, login, register } from './controllers/UserController.js';
 import {
   create,
   getAll,
+  getLastTags,
   getOne,
   remove,
   update,
@@ -62,6 +63,9 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     url: `uploads/${req.file.originalname}`,
   });
 });
+
+app.get('/tags', getLastTags);
+app.get('/posts/tags', getLastTags);
 
 app.get('/posts', getAll);
 app.get('/posts/:id', getOne);

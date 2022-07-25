@@ -6,9 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import axios from '../axios';
 import { fetchPosts, fetchTags } from '../redux/slices/posts';
-import { getAvatarGroupUtilityClass } from '@mui/material';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -42,7 +40,7 @@ export const Home = () => {
                 key={obj._id}
                 id={obj._id}
                 title={obj.title}
-                imageUrl='https://c.tenor.com/cBmz8RTK_JsAAAAC/typing-anime.gif'
+                imageUrl={obj.imageUrl}
                 user={obj.user}
                 createdAt={obj.createdAt}
                 viewsCount={obj.viewsCount}
@@ -54,10 +52,7 @@ export const Home = () => {
           )}
         </Grid>
         <Grid xs={4} item>
-          <TagsBlock
-            items={tags.items}
-            isLoading={isTagsloading}
-          />
+          <TagsBlock items={tags.items} isLoading={isTagsloading} />
           <CommentsBlock
             items={[
               {

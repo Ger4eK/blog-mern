@@ -2,15 +2,21 @@ import React, { useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import axios from '../axios';
+import { fetchPosts } from '../redux/slices/posts';
 
 export const Home = () => {
+  const dispatch = useDispatch();
+  const { posts, tags } = useSelector((state) => state.posts);
+
+  const isPostsloading = posts.status === 'loading';
+
   useEffect(() => {
-    axios.get('/posts');
+    dispatch(fetchPosts());
   }, []);
 
   return (
@@ -25,23 +31,24 @@ export const Home = () => {
       </Tabs>
       <Grid container spacing={4}>
         <Grid xs={8} item>
-          {[...Array(5)].map(() => (
-            <Post
-              id={1}
-              title='Пост'
-              imageUrl='https://c.tenor.com/cBmz8RTK_JsAAAAC/typing-anime.gif'
-              user={{
-                avatarUrl:
-                  'https://ms.detector.media/doc/images/news/25616/ArticleImage_25616.jpg',
-                fullName: 'Keff',
-              }}
-              createdAt={'12 июня 2022 г.'}
-              viewsCount={150}
-              commentsCount={3}
-              tags={['react', 'fun', 'typescript']}
-              isEditable
-            />
-          ))}
+          {(isPostsloading ? [...Array(5)] : posts.items).map((obj, index) =>
+            isPostsloading ? (
+              <Post key={index} isLoading={true} />
+            ) : (
+              <Post
+                key={obj._id}
+                id={obj._id}
+                title={obj.title}
+                imageUrl='https://c.tenor.com/cBmz8RTK_JsAAAAC/typing-anime.gif'
+                user={obj.user}
+                createdAt={obj.createdAt}
+                viewsCount={obj.viewsCount}
+                commentsCount={3}
+                tags={obj.tags}
+                isEditable
+              />
+            )
+          )}
         </Grid>
         <Grid xs={4} item>
           <TagsBlock

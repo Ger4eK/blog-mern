@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import {
   registerValidation,
   loginValidation,
@@ -41,6 +42,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json());
+app.use(cors());
+
 //! тепер пояснюємо експресу шо в нас є спеціальна папка в якій зберігаються статичні файли з фото. І тепер експре буде розуміти шо ми робимо get запит на статичний файл
 app.use('/uploads', express.static('Backend/uploads'));
 

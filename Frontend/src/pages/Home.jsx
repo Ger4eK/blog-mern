@@ -10,6 +10,8 @@ import { fetchPosts, fetchTags } from '../redux/slices/posts';
 
 export const Home = () => {
   const dispatch = useDispatch();
+  //! витягуєм дату юзера шоб перевірити чи його айді співпадає з ти яке є в пості
+  const UserData = useSelector((state) => state.auth.data);
   const { posts, tags } = useSelector((state) => state.posts);
 
   const isPostsloading = posts.status === 'loading';
@@ -48,7 +50,7 @@ export const Home = () => {
                 viewsCount={obj.viewsCount}
                 commentsCount={3}
                 tags={obj.tags}
-                isEditable
+                isEditable={UserData?._id === obj.user._id}
               />
             )
           )}

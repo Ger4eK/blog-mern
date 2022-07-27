@@ -19,9 +19,12 @@ import {
 import multer from 'multer';
 import handleValidationErrors from './utils/handleValidationErrors.js';
 
+
+
 mongoose
   .connect(
     'mongodb+srv://admin:wwwwww@cluster0.axu866w.mongodb.net/blog?retryWrites=true&w=majority'
+   
   )
   .then(() => console.log('DB ok'))
   .catch((err) => console.log('DB error', err));

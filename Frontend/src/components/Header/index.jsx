@@ -15,10 +15,11 @@ export const Header = () => {
   const onClickLogout = () => {
     if (window.confirm('Ви справді хочете вийти?')) {
       dispatch(logout());
+
+      //! видаляємо токен з ls при виході 
+      window.localStorage.removeItem('token', '')
     }
   };
-
-  
 
   return (
     <div className={styles.root}>
@@ -33,13 +34,15 @@ export const Header = () => {
                 <Link to='/posts/create'>
                   <Button variant='contained'>Написати статтю</Button>
                 </Link>
-                <Button
-                  onClick={onClickLogout}
-                  variant='contained'
-                  color='error'
-                >
-                  Вийти
-                </Button>
+                <Link to='/login'>
+                  <Button
+                    onClick={onClickLogout}
+                    variant='contained'
+                    color='error'
+                  >
+                    Вийти
+                  </Button>
+                </Link>
               </>
             ) : (
               <>

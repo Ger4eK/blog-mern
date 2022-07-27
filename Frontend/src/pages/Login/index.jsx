@@ -56,7 +56,7 @@ export const Login = () => {
           error={Boolean(errors.email?.message)}
           helperText={errors.email?.message}
           type='email'
-          {...register('email', { required: 'Укажите почту' })}
+          {...register('email', { required: 'Вкажіть пошту' })}
           fullWidth
         />
         <TextField
@@ -64,11 +64,11 @@ export const Login = () => {
           label='Пароль'
           error={Boolean(errors.password?.message)}
           helperText={errors.password?.message}
-          {...register('password', { required: 'Укажите пароль' })}
+          {...register('password', { required: 'Вкажіть пароль' })}
           fullWidth
         />
         <Button
-          //disabled={!isValid}
+          disabled={!isValid}
           type='submit'
           size='large'
           variant='contained'

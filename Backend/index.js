@@ -35,7 +35,7 @@ const app = express();
 const storage = multer.diskStorage({
   destination: (_, __, callback) => {
     //! callback функція говорить шо вона не вертає ніяких помилок 'null' і зберігає всі файли(фото) які будем завантажувати в папку 'uploads'
-    callback(null, 'Backend/uploads');
+    callback(null, 'uploads');
   },
   //! перед тим як файл зберегти в папку 'uploads' тут ми вказуємо назву цьому файлу і вже тоді зберігаєм
   filename: (_, file, callback) => {
@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(cors());
 
 //! тепер пояснюємо експресу шо в нас є спеціальна папка в якій зберігаються статичні файли з фото. І тепер експре буде розуміти шо ми робимо get запит на статичний файл
-app.use('/uploads', express.static('Backend/uploads'));
+app.use('/uploads', express.static('uploads'));
 
 app.post('/auth/login', loginValidation, handleValidationErrors, login);
 app.post(

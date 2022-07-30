@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -8,10 +8,11 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 import { useSelector } from 'react-redux';
 import { selectIsAuth } from '../../redux/slices/auth';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from '../../axios';
 
 export const AddPost = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,8 +20,9 @@ export const AddPost = () => {
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [tags, setTags] = useState([]);
-
   const inputFileRef = useRef(null);
+
+  const isEditing = Boolean(id);
 
   const handleChangeFile = async (event) => {
     try {
@@ -51,21 +53,40 @@ export const AddPost = () => {
       const fields = {
         title,
         imageUrl,
-        tags: tags.split(','),
+        tags,
         text,
       };
 
-      const { data } = await axios.post('/posts', fields);
+      const { data } = isEditing
+        ? await axios.patch(`/posts/${id}`, fields)
+        : await axios.post('/posts', fields);
 
-      const id = data._id;
+      const postId = isEditing ? id : data._id;
 
       //! будем перекидати на статтю яку щойно створили
-      navigate(`/posts/${id}`);
+      navigate(`/posts/${postId}`);
     } catch (err) {
       console.warn(err);
       alert('Помилка при створенні статті');
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`/posts/${id}`)
+        .then(({ data }) => {
+          setTitle(data.title);
+          setText(data.text);
+          setImageUrl(data.imageUrl);
+          setTags(data.tags.join(','));
+        })
+        .catch((err) => {
+          console.warn(err);
+          alert('Помилка при отриманні статті');
+        });
+    }
+  }, []);
 
   const options = useMemo(
     () => ({
@@ -145,7 +166,7 @@ export const AddPost = () => {
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size='large' variant='contained'>
-          Опублікувати
+          {isEditing ? 'Зберегти' : 'Опублікувати'}
         </Button>
         <a href='/'>
           <Button size='large'>Скасувати</Button>

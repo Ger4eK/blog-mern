@@ -22,6 +22,6 @@ export const postCreateValidation = [
   body('text', 'Введіть назву статті').isLength({ min: 3 }),
   body('tags', 'Неправильний формат тегів (вкажіть масив)')
     .optional()
-    .isArray(),
+    .isString(),
   body('avatarUrl', 'Некоректне посилання на картинку').optional().isString(),
 ];

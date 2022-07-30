@@ -6,10 +6,16 @@ import SimpleMDE from 'react-simplemde-editor';
 
 import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
+import { useSelector } from 'react-redux';
+import { selectIsAuth } from '../../redux/slices/auth';
+import { Navigate } from 'react-router-dom';
 
 export const AddPost = () => {
   const imageUrl = '';
+  const isAuth = useSelector(selectIsAuth);
   const [value, setValue] = React.useState('');
+  const [title, setTitle] = React.useState('');
+  const [tags, setTags] = React.useState('');
 
   const handleChangeFile = () => {};
 
@@ -34,6 +40,12 @@ export const AddPost = () => {
     []
   );
 
+  //! !window.localStorage.getItem('token') додаєм в провірку, шоб не викидувала на головну ше до того як запит виконався
+  if (!window.localStorage.getItem('token') && !isAuth) {
+    return <Navigate to='/' />;
+  }
+
+
   return (
     <Paper style={{ padding: 30 }}>
       <Button variant='outlined' size='large'>
@@ -55,12 +67,16 @@ export const AddPost = () => {
       <br />
       <br />
       <TextField
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         classes={{ root: styles.title }}
         variant='standard'
         placeholder='Заголовок статті...'
         fullWidth
       />
       <TextField
+        value={tags}
+        onChange={(e) => setTags(e.target.value)}
         classes={{ root: styles.tags }}
         variant='standard'
         placeholder='Теги'

@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import fs, { existsSync } from 'fs';
 import {
   registerValidation,
   loginValidation,
@@ -32,6 +33,10 @@ const app = express();
 //! створюємо сховище наших картинок
 const storage = multer.diskStorage({
   destination: (_, __, callback) => {
+    //! якшо немає папки uploads ми її створюємо
+    if(!fs.existsSync('uploads')) {
+      fs.mkdirSync('uploads')
+    }
     //! callback функція говорить шо вона не вертає ніяких помилок 'null' і зберігає всі файли(фото) які будем завантажувати в папку 'uploads'
     callback(null, 'uploads');
   },

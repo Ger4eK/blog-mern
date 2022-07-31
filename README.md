@@ -1,6 +1,6 @@
 ### Full Stack
 
-##Frontend
+## Frontend
 
 - ReactJS v18
 - Redux Toolkit

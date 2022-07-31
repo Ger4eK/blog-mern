@@ -18,6 +18,9 @@ import {
 } from './controllers/PostController.js';
 import multer from 'multer';
 import handleValidationErrors from './utils/handleValidationErrors.js';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 mongoose
   .connect(process.env.MONGODB_URI)

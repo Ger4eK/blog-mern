@@ -47,7 +47,7 @@ export const getOne = async (req, res) => {
         //! якшо всьо гуд повертаєм статтю
         res.json(doc);
       }
-    );
+    ).populate('user');
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -59,9 +59,9 @@ export const create = async (req, res) => {
   try {
     const doc = new PostModel({
       title: req.body.title,
-      text: req.body.title,
+      text: req.body.text,
       imageUrl: req.body.imageUrl,
-      tags: req.body.tags,
+      tags: req.body.tags.split(','),
       user: req.userId, //! робить бек
     });
 
@@ -74,7 +74,6 @@ export const create = async (req, res) => {
     });
   }
 };
-
 export const update = async (req, res) => {
   try {
     const postId = req.params.id;
@@ -88,7 +87,7 @@ export const update = async (req, res) => {
         text: req.body.text,
         imageUrl: req.body.imageUrl,
         user: req.userId,
-        tags: req.body.tags,
+        tags: req.body.tags.split(','),
       }
     );
 
@@ -102,7 +101,6 @@ export const update = async (req, res) => {
     });
   }
 };
-
 export const remove = async (req, res) => {
   try {
     const postId = req.params.id;
@@ -130,6 +128,24 @@ export const remove = async (req, res) => {
         });
       }
     );
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Не вдалося отримати статті',
+    });
+  }
+};
+
+export const getLastTags = async (req, res) => {
+  try {
+    const posts = await PostModel.find().limit(5).exec();
+
+    const tags = posts
+      .map((obj) => obj.tags)
+      .flat()
+      .slice(0, 5);
+
+    res.json(tags);
   } catch (error) {
     console.log(error);
     res.status(500).json({

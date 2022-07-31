@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import {
   registerValidation,
   loginValidation,
@@ -10,6 +11,7 @@ import { getMe, login, register } from './controllers/UserController.js';
 import {
   create,
   getAll,
+  getLastTags,
   getOne,
   remove,
   update,
@@ -18,9 +20,7 @@ import multer from 'multer';
 import handleValidationErrors from './utils/handleValidationErrors.js';
 
 mongoose
-  .connect(
-    'mongodb+srv://admin:wwwwww@cluster0.axu866w.mongodb.net/blog?retryWrites=true&w=majority'
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log('DB ok'))
   .catch((err) => console.log('DB error', err));
 
@@ -30,7 +30,7 @@ const app = express();
 const storage = multer.diskStorage({
   destination: (_, __, callback) => {
     //! callback функція говорить шо вона не вертає ніяких помилок 'null' і зберігає всі файли(фото) які будем завантажувати в папку 'uploads'
-    callback(null, 'Backend/uploads');
+    callback(null, 'uploads');
   },
   //! перед тим як файл зберегти в папку 'uploads' тут ми вказуємо назву цьому файлу і вже тоді зберігаєм
   filename: (_, file, callback) => {
@@ -41,8 +41,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json());
+app.use(cors());
+
 //! тепер пояснюємо експресу шо в нас є спеціальна папка в якій зберігаються статичні файли з фото. І тепер експре буде розуміти шо ми робимо get запит на статичний файл
-app.use('/uploads', express.static('Backend/uploads'));
+app.use('/uploads', express.static('uploads'));
 
 app.post('/auth/login', loginValidation, handleValidationErrors, login);
 app.post(
@@ -59,6 +61,9 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     url: `uploads/${req.file.originalname}`,
   });
 });
+
+app.get('/tags', getLastTags);
+app.get('/posts/tags', getLastTags);
 
 app.get('/posts', getAll);
 app.get('/posts/:id', getOne);
@@ -78,7 +83,7 @@ app.patch(
 );
 app.delete('/posts/:id', checkAuth, remove);
 
-app.listen(4444, (err) => {
+app.listen(process.env.PORT || 4444, (err) => {
   if (err) {
     return console.log(err);
   }

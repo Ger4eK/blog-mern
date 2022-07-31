@@ -8,3 +8,12 @@
 - React Router v6
 - React Markdown / Simple Editor
 - Axios
+
+##Backend
+
+- ModeJS
+- Express + Validator
+- MongoDB + Mongoose
+- JWT (JSON Web Token)
+- Multer
+- BCrypt

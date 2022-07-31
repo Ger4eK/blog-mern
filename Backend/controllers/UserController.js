@@ -29,7 +29,7 @@ export const register = async (req, res) => {
         expiresIn: '30d',
       }
     );
-    
+
     //! витягуєм пароль шоб він не приходив в респонс
     const { passwordHash, ...userData } = user._doc;
 

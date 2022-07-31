@@ -3,7 +3,7 @@ import PostModel from '../models/Post.js';
 export const getAll = async (req, res) => {
   try {
     //! populate('user').exec() -  передає об'єкт з інформаціє про юзера (таким чином ми робимо зв'язок між постом і юзером який той пост зробив). Без цього ми бдуем отримувати тільки айді юзера який зробив цей пост.
-    const posts = await PostModel.find().populate('user').exec();
+    const posts = await PostModel.find().sort({ _id: -1 }).populate('user').exec();
 
     res.json(posts);
   } catch (error) {
